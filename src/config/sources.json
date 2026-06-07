@@ -1,0 +1,106 @@
+[
+  {
+    "id": "fapa_asturias",
+    "nombre": "Federación de Atletismo del Principado de Asturias",
+    "siglas": "FAPA",
+    "web_principal": "http://fasatle.org",
+    "modalidad_predominante": "Carrera Oficial",
+    "selector": "h2, h3, .entry-title"
+  },
+  {
+    "id": "fempa_asturias",
+    "nombre": "Federación de Deportes de Montaña del Principado de Asturias",
+    "siglas": "FEMPA",
+    "web_principal": "https://fempa.net",
+    "modalidad_predominante": "Trail Running",
+    "selector": ".event-title, h3, .title"
+  },
+  {
+    "id": "aa_avilesina",
+    "nombre": "Asociación Atlética Avilesina",
+    "siglas": "AAA",
+    "web_principal": "http://avilesina.com",
+    "modalidad_predominante": "Carrera Popular",
+    "selector": "h2, h3, .post-title"
+  },
+  {
+    "id": "gijon_atletismo",
+    "nombre": "Club Gijón Atletismo",
+    "siglas": "GIAT",
+    "web_principal": "http://gijonatletismo.com",
+    "modalidad_predominante": "Promoción Escolar",
+    "selector": "h2, h3, .entry-title"
+  },
+  {
+    "id": "oviedo_atletismo",
+    "nombre": "Club Oviedo Atletismo",
+    "siglas": "OVIAT",
+    "web_principal": "http://oviedoatletismo.com",
+    "modalidad_predominante": "Carrera Oficial",
+    "selector": "h2, h3, .title"
+  },
+  {
+    "id": "oriente_atletismo",
+    "nombre": "Club Oriente Atletismo",
+    "siglas": "COA",
+    "web_principal": "http://orienteatletismo.com",
+    "modalidad_predominante": "Carrera Popular",
+    "selector": "h2, h3, .entry-title"
+  },
+  {
+    "id": "atletismo_lugones",
+    "nombre": "Club Ciudad de Lugones",
+    "siglas": "CCLU",
+    "web_principal": "http://atletismolugones.com",
+    "modalidad_predominante": "Carrera Popular",
+    "selector": "h2, h3, .post-title"
+  },
+  {
+    "id": "ochobre_atletismo",
+    "nombre": "Ochobre Atletismo",
+    "siglas": "OCHA",
+    "web_principal": "http://ochobre.es",
+    "modalidad_predominante": "Carrera Popular",
+    "selector": "h2, h3, .entry-title"
+  },
+  {
+    "id": "atletismo_castrillon",
+    "nombre": "Club Atletismo Castrillón",
+    "siglas": "CACA",
+    "web_principal": "http://atletismocastrillon.com",
+    "modalidad_predominante": "Carrera Popular",
+    "selector": "h2, h3, .title"
+  },
+  {
+    "id": "empat_cronometraje",
+    "nombre": "Empa-t Servicios y Formación SLNE",
+    "siglas": "Empa-t",
+    "web_principal": "https://empa-t.com",
+    "modalidad_predominante": "Plataforma de Inscripciones",
+    "selector": "h2, h3, .elementor-heading-title"
+  },
+  {
+    "id": "321go_cronometraje",
+    "nombre": "321Go",
+    "siglas": "321Go",
+    "web_principal": "https://321go.es",
+    "modalidad_predominante": "Plataforma de Inscripciones",
+    "selector": ".event-name, h3, .title"
+  },
+  {
+    "id": "trail_running_asturias",
+    "nombre": "Trail Running Asturias",
+    "siglas": "TRA",
+    "web_principal": "https://trailrunningasturias.com",
+    "modalidad_predominante": "Trail Running",
+    "selector": "article h2, .entry-title"
+  },
+  {
+    "id": "oso_ondo_corre",
+    "nombre": "Oso Ondo ¡Corre!",
+    "siglas": "OOC",
+    "web_principal": "http://osoondu.blogspot.com",
+    "modalidad_predominante": "Agregador de Calendario",
+    "selector": ".post-title, h3"
+  }
+]

@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="es" class="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Radar de Carreras | Asturias</title>
+    <link rel="icon" type="image/png" href="/assets/img_logo_1.png">
+    <link rel="manifest" href="/manifest.json">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <meta name="theme-color" content="#2563eb">
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#2563eb',
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap');
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(255, 255, 255, 0.8); backdrop-filter: blur(10px); }
+        .dark .glass { background: rgba(15, 23, 42, 0.8); }
+    </style>
+</head>
+<body class="bg-gray-50 dark:bg-slate-900 text-slate-900 dark:text-slate-100 transition-colors duration-300">
+    
+    <!-- Pantalla de Login -->
+    <div id="login-screen" class="fixed inset-0 z-[100] flex items-center justify-center bg-primary">
+        <div class="bg-white dark:bg-slate-800 p-8 rounded-[2rem] shadow-2xl max-w-sm w-full text-center mx-4 border border-white/20">
+            <div class="mb-8">
+                <div class="w-24 h-24 bg-blue-50 dark:bg-slate-700 rounded-3xl flex items-center justify-center mx-auto mb-6 shadow-inner overflow-hidden">
+                    <img src="/assets/img_logo_1.png" alt="Logo" class="w-full h-full object-cover">
+                </div>
+                <h2 class="text-3xl font-extrabold mb-3">Radar de Carreras</h2>
+                <p class="text-slate-500 dark:text-slate-400 text-sm">El centro de control de tu pasión por el running en Asturias.</p>
+            </div>
+            
+            <button id="btn-login-main" class="w-full bg-primary hover:bg-blue-700 text-white font-bold py-4 rounded-2xl flex items-center justify-center transition-all shadow-lg shadow-blue-200 dark:shadow-none active:scale-95">
+                <i class="fab fa-google mr-3 text-xl"></i> Entrar con Google
+            </button>
+            
+            <p class="mt-8 text-[10px] text-slate-400 uppercase tracking-[0.2em] font-bold">Asturias Racing Bot v2.1</p>
+        </div>
+    </div>
+
+    <!-- Contenido App -->
+    <div id="app-content" class="hidden min-h-screen pb-20 md:pb-0">
+        <!-- Header -->
+        <header class="glass sticky top-0 z-40 border-b border-slate-200 dark:border-slate-800">
+            <div class="container mx-auto px-4 py-3 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded-xl shadow-lg shadow-blue-200 overflow-hidden">
+                        <img src="/assets/img_logo_1.png" alt="Logo" class="w-full h-full object-cover">
+                    </div>
+                    <h1 class="text-lg font-bold tracking-tight hidden sm:block">Radar Asturias</h1>
+                </div>
+
+                <div class="flex items-center space-x-2 md:space-x-4">
+                    <button id="btn-dark-mode" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 transition-colors">
+                        <i class="fas fa-moon dark:hidden"></i>
+                        <i class="fas fa-sun hidden dark:block"></i>
+                    </button>
+                    <button id="btn-notif" class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-600 dark:text-slate-400 hover:bg-slate-200 transition-colors relative">
+                        <i class="fas fa-bell"></i>
+                        <span id="notif-badge" class="absolute top-2 right-2 w-2 h-2 bg-red-500 rounded-full hidden"></span>
+                    </button>
+                    <div class="h-8 w-px bg-slate-200 dark:bg-slate-700 mx-1"></div>
+                    <div class="flex items-center space-x-2">
+                        <img id="user-avatar" class="w-9 h-9 rounded-full border-2 border-primary shadow-sm" src="" alt="">
+                        <button id="btn-logout" class="p-2 text-slate-400 hover:text-red-500 transition-colors">
+                            <i class="fas fa-sign-out-alt"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="container mx-auto px-4 py-6 md:py-8">
+            <!-- Barra de Búsqueda y Filtros Rápidos -->
+            <div class="mb-8 space-y-4">
+                <div class="relative group">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-primary transition-colors"></i>
+                    <input type="text" id="filtro-texto" placeholder="Buscar carrera, club o localidad..." 
+                           class="w-full pl-12 pr-4 py-4 bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 rounded-2xl shadow-sm focus:ring-2 focus:ring-primary focus:border-transparent outline-none transition-all text-lg">
+                </div>
+
+                <div class="flex overflow-x-auto pb-2 space-x-2 no-scrollbar scroll-smooth">
+                    <button class="filter-chip active" data-type="">Todas</button>
+                    <button class="filter-chip" data-type="Trail Running">Trail</button>
+                    <button class="filter-chip" data-type="Asfalto">Asfalto</button>
+                    <button class="filter-chip" data-type="Cross">Cross</button>
+                    <button class="filter-chip" data-type="Triatlón">Triatlón</button>
+                    <button class="filter-chip" data-type="Solidaria">Solidaria</button>
+                    <button class="filter-chip" data-type="Otros">Otros</button>
+                    <button id="btn-show-favs" class="filter-chip text-pink-500"><i class="fas fa-heart mr-1"></i> Favoritos</button>
+                </div>
+            </div>
+
+            <!-- Filtros Avanzados (Desplegable) -->
+            <details class="mb-8 group">
+                <summary class="list-none cursor-pointer flex items-center text-sm font-bold text-slate-500 uppercase tracking-wider hover:text-primary transition-colors">
+                    <i class="fas fa-sliders-h mr-2"></i> Filtros Avanzados
+                    <i class="fas fa-chevron-down ml-auto transition-transform group-open:rotate-180"></i>
+                </summary>
+                <div class="mt-4 p-6 bg-white dark:bg-slate-800 rounded-3xl border border-slate-100 dark:border-slate-700 shadow-sm grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Localidad</label>
+                        <select id="filtro-localidad" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary">
+                            <option value="">Cualquier parte</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-slate-400 uppercase mb-2">Desde fecha</label>
+                        <input type="date" id="filtro-fecha" class="w-full p-3 bg-slate-50 dark:bg-slate-900 border border-slate-200 dark:border-slate-700 rounded-xl outline-none focus:ring-2 focus:ring-primary">
+                    </div>
+                    <div class="flex items-center">
+                        <label class="flex items-center space-x-3 cursor-pointer select-none">
+                            <input type="checkbox" id="check-pasadas" class="w-5 h-5 rounded border-slate-300 text-primary focus:ring-primary">
+                            <span class="text-sm font-medium text-slate-600 dark:text-slate-300">Mostrar pasadas</span>
+                        </label>
+                    </div>
+                    <div class="flex items-end">
+                        <button id="btn-filtrar" class="w-full bg-primary text-white font-bold py-3 rounded-xl hover:bg-blue-700 transition-all shadow-lg shadow-blue-200 dark:shadow-none active:scale-95">
+                            Aplicar
+                        </button>
+                    </div>
+                </div>
+            </details>
+
+            <!-- Grid de Carreras -->
+            <div id="carreras-container" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Skeletons se insertan aquí por JS -->
+            </div>
+        </main>
+    </div>
+
+    <style>
+        .filter-chip {
+            @apply flex-shrink-0 px-5 py-2.5 rounded-full bg-white dark:bg-slate-800 border border-slate-200 dark:border-slate-700 text-sm font-bold text-slate-600 dark:text-slate-400 hover:border-primary hover:text-primary transition-all shadow-sm;
+        }
+        .filter-chip.active {
+            @apply bg-primary border-primary text-white shadow-lg shadow-blue-200 dark:shadow-none;
+        }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    </style>
+
+    <script src="/app.js?v=2.2"></script>
+    <!-- Schema.org Placeholder -->
+    <script type="application/ld+json" id="schema-ld"></script>
+</body>
+</html>
