@@ -1,27 +1,26 @@
 {
   "version": 2,
-  "builds": [
-    {
-      "src": "src/index.js",
-      "use": "@vercel/node"
+  "functions": {
+    "src/index.js": {
+      "runtime": "@vercel/node"
     }
-  ],
-  "routes": [
+  },
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/public/assets/$1"
+      "source": "/api/(.*)",
+      "destination": "/src/index.js"
     },
     {
-      "src": "/(.*).(js|html|json|png|ico|txt|js.map|css)",
-      "dest": "/public/$1.$2"
+      "source": "/assets/(.*)",
+      "destination": "/public/assets/$1"
     },
     {
-      "src": "/api/(.*)",
-      "dest": "src/index.js"
+      "source": "/((?!api/).*)",
+      "destination": "/public/$1"
     },
     {
-      "src": "/",
-      "dest": "/public/index.html"
+      "source": "/",
+      "destination": "/public/index.html"
     }
   ],
   "crons": [
