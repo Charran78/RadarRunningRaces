@@ -10,11 +10,12 @@ async function saveCarreras(carreras) {
   const nuevasCarreras = [];
 
   for (const carrera of carreras) {
-    // Verificamos si ya existe por enlace (URL única)
+    // Verificamos si ya existe por enlace (URL única) O por título y fecha
+    // Esto evita duplicados si la misma carrera está en varias webs con distinta URL
     const { data: existing, error: selectError } = await supabase
       .from('carreras')
-      .select('id')
-      .eq('enlace', carrera.enlace)
+      .select('id, enlace')
+      .or(`enlace.eq."${carrera.enlace}",and(titulo.eq."${carrera.titulo}",fecha_carrera.eq."${carrera.fecha_carrera}")`)
       .maybeSingle();
 
     if (selectError) {
@@ -204,6 +205,33 @@ async function getUniqueLocalidades() {
   return unique;
 }
 
+async function getActiveCategories(filtros = {}) {
+  let query = supabase
+    .from('carreras')
+    .select('tipo')
+    .not('tipo', 'is', null);
+
+  if (filtros.fecha_desde) {
+    // Sincronizar con la misma lógica de getCarreras: futuras o sin fecha
+    query = query.or(`fecha_carrera.gte.${filtros.fecha_desde},fecha_carrera.is.null`);
+  }
+  
+  const { data, error } = await query;
+  
+  if (error) return [];
+  
+  // Contar ocurrencias por categoría
+  const counts = data.reduce((acc, curr) => {
+    acc[curr.tipo] = (acc[curr.tipo] || 0) + 1;
+    return acc;
+  }, {});
+
+  // Devolver lista de categorías con su contador, ordenadas por volumen
+  return Object.entries(counts)
+    .map(([nombre, total]) => ({ nombre, total }))
+    .sort((a, b) => b.total - a.total);
+}
+
 // Almacenamiento de imágenes en Supabase Storage
 async function uploadImageFromUrl(url, fileName) {
   try {
@@ -252,6 +280,7 @@ module.exports = {
   toggleFavorite,
   getUserFavorites,
   getUniqueLocalidades,
+  getActiveCategories,
   uploadImageFromUrl,
   deleteExpiredImages,
   supabase

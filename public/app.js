@@ -9,10 +9,10 @@ const filtroLocalidad = document.getElementById('filtro-localidad');
 const filtroFecha = document.getElementById('filtro-fecha');
 const filtroTexto = document.getElementById('filtro-texto');
 const checkPasadas = document.getElementById('check-pasadas');
-const btnShowFavs = document.getElementById('btn-show-favs');
-const filterChips = document.querySelectorAll('.filter-chip');
+const chipsContainer = document.getElementById('filter-chips-container');
 const btnNotif = document.getElementById('btn-notif');
 const btnFiltrar = document.getElementById('btn-filtrar');
+let btnShowFavs = document.getElementById('btn-show-favs');
 
 let supabaseClient;
 let currentSession = null;
@@ -76,6 +76,7 @@ async function updateAuthUI(session) {
         await Promise.all([
             cargarFavoritos(),
             cargarLocalidades(),
+            cargarCategorias(),
             resetYCargarCarreras()
         ]);
     } else {
@@ -149,6 +150,69 @@ async function cargarLocalidades() {
     } catch (error) {}
 }
 
+async function cargarCategorias() {
+    try {
+        const params = new URLSearchParams({
+            solo_futuras: !checkPasadas.checked
+        });
+        if (filtroFecha.value) params.append('fecha_desde', filtroFecha.value);
+
+        const res = await fetch(`/api/categorias?${params.toString()}`);
+        const categorias = await res.json();
+        
+        // Mantener "Todas" y "Favoritos"
+        const todasHtml = `<button class="filter-chip ${activeType === "" && !showingFavs ? 'active' : ''}" data-type="">Todas</button>`;
+        const favCount = userFavorites.length;
+        const favsHtml = `<button id="btn-show-favs" class="filter-chip text-pink-500 ${showingFavs ? 'active' : ''}">
+            <i class="fas fa-heart mr-1"></i> Favoritos 
+            ${favCount > 0 ? `<span class="ml-1 opacity-50 text-[10px] font-normal">${favCount}</span>` : ''}
+        </button>`;
+        
+        const dynamicHtml = categorias.map(c => `
+            <button class="filter-chip ${activeType === c.nombre ? 'active' : ''}" data-type="${c.nombre}">
+                ${c.nombre} <span class="ml-1 opacity-50 text-[10px] font-normal">${c.total}</span>
+            </button>
+        `).join('');
+
+        chipsContainer.innerHTML = todasHtml + dynamicHtml + favsHtml;
+        
+        // Actualizar referencia global de btnShowFavs
+        btnShowFavs = document.getElementById('btn-show-favs');
+        
+        // Re-asignar eventos ya que hemos borrado y recreado los botones
+        setupChipEvents();
+    } catch (error) {
+        console.error('Error cargando categorías:', error);
+    }
+}
+
+function setupChipEvents() {
+    const chips = chipsContainer.querySelectorAll('.filter-chip');
+    const favBtn = document.getElementById('btn-show-favs');
+
+    chips.forEach(chip => {
+        if (chip.id === 'btn-show-favs') return; // Manejado aparte
+        
+        chip.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('active'));
+            chip.classList.add('active');
+            activeType = chip.dataset.type;
+            showingFavs = false;
+            filtrarYRenderizar();
+        });
+    });
+
+    if (favBtn) {
+        favBtn.addEventListener('click', () => {
+            chips.forEach(c => c.classList.remove('active'));
+            favBtn.classList.add('active');
+            showingFavs = true;
+            activeType = "";
+            filtrarYRenderizar();
+        });
+    }
+}
+
 async function cargarFavoritos() {
     if (!currentSession) return;
     try {
@@ -183,6 +247,8 @@ async function toggleFav(carreraId, btn) {
             btn.querySelector('i').classList.replace('fas', 'far');
             if (showingFavs) filtrarYRenderizar();
         }
+        // Actualizar chips para reflejar el nuevo conteo de favoritos
+        cargarCategorias();
     } catch (error) {}
 }
 
@@ -376,23 +442,7 @@ checkPasadas.addEventListener('change', cargarCarreras);
 btnFiltrar.addEventListener('click', cargarCarreras);
 btnNotif.addEventListener('click', subscribeToPush);
 
-filterChips.forEach(chip => {
-    chip.addEventListener('click', () => {
-        filterChips.forEach(c => c.classList.remove('active'));
-        chip.classList.add('active');
-        activeType = chip.dataset.type;
-        showingFavs = false;
-        filtrarYRenderizar();
-    });
-});
-
-btnShowFavs.addEventListener('click', () => {
-    filterChips.forEach(c => c.classList.remove('active'));
-    btnShowFavs.classList.add('active');
-    showingFavs = true;
-    activeType = "";
-    filtrarYRenderizar();
-});
+// Nota: Los eventos de chips se manejan dentro de cargarCategorias -> setupChipEvents
 
 btnLoginMain.addEventListener('click', async () => {
     await supabaseClient.auth.signInWithOAuth({

@@ -10,6 +10,7 @@ const {
   toggleFavorite, 
   getUserFavorites, 
   getUniqueLocalidades,
+  getActiveCategories,
   deleteExpiredImages,
   supabase 
 } = require('./services/db');
@@ -98,6 +99,16 @@ app.get('/api/carreras', async (req, res) => {
 app.get('/api/localidades', async (req, res) => {
   const locales = await getUniqueLocalidades();
   res.json(locales);
+});
+
+// Obtener categorías activas con contadores
+app.get('/api/categorias', async (req, res) => {
+  const { solo_futuras, fecha_desde } = req.query;
+  const hoy = new Date().toISOString().split('T')[0];
+  const filtroFecha = solo_futuras === 'false' ? fecha_desde : (fecha_desde || hoy);
+
+  const categorias = await getActiveCategories({ fecha_desde: filtroFecha });
+  res.json(categorias);
 });
 
 // Favoritos (Protegido)
