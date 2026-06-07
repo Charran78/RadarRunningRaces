@@ -16,11 +16,12 @@ const {
 } = require('./services/db');
 const { enviarNotificacionNuevaCarrera } = require('./services/notificaciones');
 
+const path = require('path');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static('public'));
+app.use(express.static(path.join(__dirname, '../public')));
 
 // Middleware para verificar Auth de Supabase
 async function authenticate(req, res, next) {
