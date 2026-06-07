@@ -33,7 +33,7 @@ El centro de control definitivo para los corredores en Asturias. Una Progressive
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/Charran78/RadarRunningRaces.git
+    git clone https://github.com/Charran78/RadarRunningRaces.git
    cd radar-carreras
    ```
 

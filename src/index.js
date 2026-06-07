@@ -184,23 +184,30 @@ app.get('/api/admin/actualizar', async (req, res) => {
   res.json({ ok: true, ...resultado });
 });
 
-// ─── Tarea programada (3:30 AM) ─────────────────────────────────────────────
-cron.schedule('30 3 * * *', actualizarCarreras);
+// Exportar para Vercel
+module.exports = app;
+
+// ─── Tarea programada (3:30 AM) - Solo en local ─────────────────────────────
+if (process.env.NODE_ENV !== 'production') {
+  cron.schedule('30 3 * * *', actualizarCarreras);
+}
 
 // ─── Arrancar servidor ────────────────────────────────────────────────────────
-app.listen(PORT, async () => {
-  console.log(`🚀 Servidor radar en http://localhost:${PORT}`);
-  
-  // Carga inicial
-  try {
-    const enBD = await getCarreras();
-    if (enBD.length === 0) {
-      console.log('📂 Base de datos vacía en Supabase. Realizando carga inicial...');
-      await actualizarCarreras();
-    } else {
-      console.log(`📂 ${enBD.length} carreras encontradas en Supabase.`);
+if (require.main === module) {
+  app.listen(PORT, async () => {
+    console.log(`🚀 Servidor radar en http://localhost:${PORT}`);
+    
+    // Carga inicial
+    try {
+      const enBD = await getCarreras();
+      if (enBD.length === 0) {
+        console.log('📂 Base de datos vacía en Supabase. Realizando carga inicial...');
+        await actualizarCarreras();
+      } else {
+        console.log(`📂 ${enBD.length} carreras encontradas en Supabase.`);
+      }
+    } catch (error) {
+      console.error('❌ Error en el arranque:', error.message);
     }
-  } catch (error) {
-    console.error('❌ Error en el arranque:', error.message);
-  }
-});
+  });
+}

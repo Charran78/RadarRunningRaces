@@ -1,0 +1,33 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "src/index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/assets/(.*)",
+      "dest": "/public/assets/$1"
+    },
+    {
+      "src": "/(.*).(js|html|json|png|ico|txt|js.map|css)",
+      "dest": "/public/$1.$2"
+    },
+    {
+      "src": "/api/(.*)",
+      "dest": "src/index.js"
+    },
+    {
+      "src": "/",
+      "dest": "/public/index.html"
+    }
+  ],
+  "crons": [
+    {
+      "path": "/api/admin/actualizar",
+      "schedule": "30 3 * * *"
+    }
+  ]
+}
