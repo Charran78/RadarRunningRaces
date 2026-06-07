@@ -6,8 +6,12 @@
       "destination": "src/index.js"
     },
     {
+      "source": "/assets/(.*)",
+      "destination": "public/assets/$1"
+    },
+    {
       "source": "/(.*)",
-      "destination": "src/index.js"
+      "destination": "public/$1"
     }
   ],
   "crons": [

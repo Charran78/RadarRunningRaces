@@ -21,7 +21,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(express.static(path.join(__dirname, '../public')));
+
+// Servir estáticos de forma absoluta para Vercel
+const publicPath = path.join(process.cwd(), 'public');
+app.use(express.static(publicPath));
 
 // Middleware para verificar Auth de Supabase
 async function authenticate(req, res, next) {
