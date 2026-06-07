@@ -1,5 +1,7 @@
 # 3xR - Radar Running Races Asturias 🏃‍♂️💨
 
+![3xR](public/assets/img_fallback_2.png)
+
 ![Version](https://img.shields.io/badge/version-2.2-blue)
 ![PWA](https://img.shields.io/badge/PWA-Ready-green)
 ![License](https://img.shields.io/badge/license-MIT-orange)
