@@ -1,6 +1,7 @@
 # 3xR - Radar Running Races Asturias 🏃‍♂️💨
 
 <br />
+<div>
 
 <img src="./public/assets/img_fallback_2.png" alt="3xR Logo" width="400" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" />
 
