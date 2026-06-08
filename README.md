@@ -1,5 +1,11 @@
 # 3xR - Radar Running Races Asturias 🏃‍♂️💨
 
+<br />
+
+<img src="./public/assets/img_fallback_2.png" alt="3xR Logo" width="400" style="max-width: 100%; height: auto; display: block; margin: 0 auto;" />
+
+</div>
+
 ![Version](https://img.shields.io/badge/version-2.5-blue)
 ![PWA](https://img.shields.io/badge/PWA-Ready-green)
 ![IA](https://img.shields.io/badge/IA-Coach_Xuan-orange)
@@ -34,7 +40,7 @@ El centro de control definitivo para los corredores en Asturias. Una Progressive
 
 1. **Clonar el repositorio:**
    ```bash
-   git clone https://github.com/tu-usuario/radar-carreras.git
+   git clone https://github.com/charran78/radar-carreras.git
    cd radar-carreras
    ```
 
@@ -44,7 +50,21 @@ El centro de control definitivo para los corredores en Asturias. Una Progressive
    ```
 
 3. **Configurar variables de entorno:**
-   Crea un archivo `.env` con las claves de Supabase, VAPID y tu `GROQ_API_KEY`.
+   Crea un archivo `.env` con las claves de Supabase, VAPID y tu `GROQ_API_KEY`. Tienes el ejemplo en el .env.example:
+
+   ```bash
+   SUPABASE_URL=https://example.supabase.co
+   SUPABASE_ANON_KEY=eyJ_TuClave
+   VAPID_PUBLIC_KEY=BD_tu_clave
+   VAPID_PRIVATE_KEY=tEtu_clave
+   VAPID_EMAIL=mailto:example@gmail.com
+   SUPABASE_SERVICE_ROLE_KEY=eyJtu_clave
+   GROQ_API_KEY=gsk_tu_clave
+   NODE_ENV=development
+   BASE_URL=https://example.vercel.app
+   ```
+
+
 
 4. **Iniciar el servidor:**
    ```bash
