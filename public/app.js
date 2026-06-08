@@ -456,4 +456,152 @@ btnLogout.addEventListener('click', async () => {
     window.location.reload();
 });
 
+// ─── Zona Runner & IA ─────────────────────────────────────────────────────────
+
+function toggleDrawer() {
+    const drawer = document.getElementById('runner-drawer');
+    drawer.classList.toggle('open');
+}
+
+function switchTab(tab) {
+    const btnCalc = document.getElementById('tab-btn-calc');
+    const btnIA = document.getElementById('tab-btn-ia');
+    const contentCalc = document.getElementById('tab-content-calc');
+    const contentIA = document.getElementById('tab-content-ia');
+
+    if (tab === 'calc') {
+        btnCalc.classList.add('border-orange-500', 'text-orange-500');
+        btnCalc.classList.remove('border-transparent', 'text-slate-400');
+        btnIA.classList.add('border-transparent', 'text-slate-400');
+        btnIA.classList.remove('border-orange-500', 'text-orange-500');
+        contentCalc.classList.remove('hidden');
+        contentIA.classList.add('hidden');
+    } else {
+        btnIA.classList.add('border-orange-500', 'text-orange-500');
+        btnIA.classList.remove('border-transparent', 'text-slate-400');
+        btnCalc.classList.add('border-transparent', 'text-slate-400');
+        btnCalc.classList.remove('border-orange-500', 'text-orange-500');
+        contentIA.classList.remove('hidden');
+        contentCalc.classList.add('hidden');
+    }
+}
+
+function setCalcDist(dist) {
+    document.getElementById('calc-km').value = dist;
+}
+
+function calcularRitmo() {
+    const km = parseFloat(document.getElementById('calc-km').value);
+    const h = parseInt(document.getElementById('calc-h').value) || 0;
+    const m = parseInt(document.getElementById('calc-m').value) || 0;
+    const s = parseInt(document.getElementById('calc-s').value) || 0;
+
+    if (!km || km <= 0) return;
+
+    const totalSeconds = (h * 3600) + (m * 60) + s;
+    const paceSeconds = totalSeconds / km;
+
+    const paceM = Math.floor(paceSeconds / 60);
+    const paceS = Math.floor(paceSeconds % 60);
+    const speed = (km / (totalSeconds / 3600)).toFixed(2);
+
+    document.getElementById('res-pace').textContent = `${paceM}:${paceS.toString().padStart(2, '0')} min/km`;
+    document.getElementById('res-speed').textContent = `${speed} km/h`;
+    document.getElementById('calc-results').classList.remove('hidden');
+}
+
+function exportarFavoritosICS() {
+    if (userFavorites.length === 0) {
+        alert('Primero añade algunas carreras a tus favoritos.');
+        return;
+    }
+
+    const favoritas = allCarreras.filter(c => userFavorites.includes(c.id));
+    
+    let icsContent = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//3xR Radar Carreras//ES\n";
+    
+    favoritas.forEach(c => {
+        if (!c.fecha_carrera) return;
+        const fecha = c.fecha_carrera.replace(/-/g, '');
+        icsContent += "BEGIN:VEVENT\n";
+        icsContent += `SUMMARY:${c.titulo}\n`;
+        icsContent += `DTSTART:${fecha}T090000\n`;
+        icsContent += `DTEND:${fecha}T120000\n`;
+        icsContent += `LOCATION:${c.localidad || 'Asturias'}\n`;
+        icsContent += `DESCRIPTION:Carrera tipo ${c.tipo}. Más info en: ${c.enlace}\n`;
+        icsContent += "END:VEVENT\n";
+    });
+
+    icsContent += "END:VCALENDAR";
+
+    const blob = new Blob([icsContent], { type: 'text/calendar;charset=utf-8' });
+    const link = document.createElement('a');
+    link.href = window.URL.createObjectURL(blob);
+    link.setAttribute('download', 'mis_carreras_asturias.ics');
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
+// ─── Xuan IA Coach ───────────────────────────────────────────────────────────
+
+async function sendUserMessage() {
+    const input = document.getElementById('ia-chat-input');
+    const message = input.value.trim();
+    if (!message) return;
+
+    appendChatMessage('user', message);
+    input.value = '';
+    
+    const btn = document.getElementById('btn-send-ia');
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-circle-notch fa-spin"></i>';
+
+    try {
+        const res = await fetch('/api/chat', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ prompt: message })
+        });
+        const data = await res.json();
+        appendChatMessage('xuan', data.text);
+    } catch (error) {
+        appendChatMessage('xuan', 'Lo siento, fíu, hay mala cobertura por aquí. Inténtalo de nuevo.');
+    } finally {
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane text-xs"></i>';
+    }
+}
+
+function appendChatMessage(role, text) {
+    const container = document.getElementById('chat-container-ia');
+    const div = document.createElement('div');
+    
+    if (role === 'user') {
+        div.className = 'p-3 rounded-2xl bg-primary text-white max-w-[90%] self-end text-[10px]';
+        div.textContent = text;
+    } else {
+        div.className = 'p-3 rounded-2xl bg-slate-900 border border-slate-800 max-w-[90%] self-start';
+        div.innerHTML = `
+            <div class="flex items-center gap-2 text-orange-400 font-bold mb-1 text-[10px]">
+                <i class="fa-solid fa-circle-user"></i>
+                <span>Xuan Coach Astur</span>
+            </div>
+            <p class="text-slate-300 leading-relaxed text-[10px]">${text}</p>
+        `;
+    }
+    
+    container.appendChild(div);
+    container.scrollTop = container.scrollHeight;
+}
+
+function sendQuickPrompt(prompt) {
+    document.getElementById('ia-chat-input').value = prompt;
+    sendUserMessage();
+}
+
+function handleChatEnter(e) {
+    if (e.key === 'Enter') sendUserMessage();
+}
+
 init();

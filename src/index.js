@@ -15,6 +15,7 @@ const {
   supabase 
 } = require('./services/db');
 const { enviarNotificacionNuevaCarrera } = require('./services/notificaciones');
+const axios = require('axios');
 
 const path = require('path');
 const app = express();
@@ -168,6 +169,37 @@ app.get('/api/config', (req, res) => {
 // Obtener VAPID Public Key
 app.get('/api/notificaciones/vapid-key', (req, res) => {
   res.json({ publicKey: process.env.VAPID_PUBLIC_KEY });
+});
+
+// Xuan IA Coach (Groq)
+app.post('/api/chat', async (req, res) => {
+  try {
+    const { prompt } = req.body;
+    if (!process.env.GROQ_API_KEY) {
+      return res.json({ text: "Lo siento fíu, no tengo las llaves de la oficina (falta API Key)." });
+    }
+
+    const response = await axios.post('https://api.groq.com/openai/v1/chat/completions', {
+      model: "llama-3.1-8b-instant",
+      messages: [
+        {
+          role: "system",
+          content: "Eres Xuan, un entrenador experto en carreras populares y trail running en Asturias. Hablas de forma cercana, usando expresiones asturianas de forma natural (como 'fíu', 'tierrina', 'orbayu', 'puxa'). Tu objetivo es ayudar a los corredores a preparar sus carreras en Asturias, dando consejos sobre ritmos, equipación según el clima asturiano y motivación."
+        },
+        { role: "user", content: prompt }
+      ]
+    }, {
+      headers: {
+        'Authorization': `Bearer ${process.env.GROQ_API_KEY}`,
+        'Content-Type': 'application/json'
+      }
+    });
+
+    res.json({ text: response.data.choices[0].message.content });
+  } catch (error) {
+    console.error('Error Groq:', error.response?.data || error.message);
+    res.status(500).json({ error: 'Error al contactar con Xuan Coach' });
+  }
 });
 
 // Suscribirse a notificaciones push

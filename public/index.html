@@ -204,6 +204,123 @@
         .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     </style>
 
+    <!-- Zona Runner & IA (Drawer) -->
+    <div id="runner-drawer" class="fixed top-0 right-0 h-full w-[320px] bg-slate-900 border-l border-slate-800 z-50 transition-transform duration-500 translate-x-full shadow-2xl">
+        <!-- Pestaña de apertura -->
+        <div id="drawer-tab" onclick="toggleDrawer()" class="flex flex-col gap-2 justify-center items-center select-none bg-slate-900 border-l border-t border-b border-slate-800 absolute -left-[54px] top-10 p-3 rounded-l-2xl cursor-pointer text-orange-500 shadow-md">
+            <i class="fa-solid fa-wand-magic-sparkles text-xl animate-bounce"></i>
+            <span class="text-[9px] font-bold uppercase tracking-wider vertical-text">Zona Runner & IA</span>
+        </div>
+
+        <div class="p-6 h-full flex flex-col">
+            <!-- Panel de Herramientas Runner -->
+            <div class="w-full flex flex-col text-xs h-full overflow-hidden">
+                
+                <!-- Selector de Pestañas Drawer -->
+                <div class="flex border-b border-slate-800 pb-2 mb-4">
+                    <button id="tab-btn-calc" onclick="switchTab('calc')" class="flex-1 py-1 px-2 font-bold uppercase text-[10px] tracking-wider text-center border-b-2 border-orange-500 text-orange-500">
+                        <i class="fa-solid fa-calculator mr-1"></i> Calculadora
+                    </button>
+                    <button id="tab-btn-ia" onclick="switchTab('ia')" class="flex-1 py-1 px-2 font-bold uppercase text-[10px] tracking-wider text-center border-b-2 border-transparent text-slate-400 hover:text-white transition-all">
+                        <i class="fa-solid fa-wand-magic-sparkles mr-1 text-orange-400"></i> Coach Xuan
+                    </button>
+                </div>
+
+                <!-- CONTENIDO PESTAÑA: CALCULADORA -->
+                <div id="tab-content-calc" class="flex flex-col gap-4 h-full overflow-y-auto pr-1">
+                    <div class="space-y-3">
+                        <div class="flex gap-1">
+                            <button onclick="setCalcDist(5)" class="flex-1 bg-slate-800 hover:bg-slate-700 py-1.5 px-2 rounded-lg text-[10px] font-bold">5K</button>
+                            <button onclick="setCalcDist(10)" class="flex-1 bg-slate-800 hover:bg-slate-700 py-1.5 px-2 rounded-lg text-[10px] font-bold">10K</button>
+                            <button onclick="setCalcDist(21.097)" class="flex-1 bg-slate-800 hover:bg-slate-700 py-1.5 px-2 rounded-lg text-[10px] font-bold">21K</button>
+                            <button onclick="setCalcDist(42.195)" class="flex-1 bg-slate-800 hover:bg-slate-700 py-1.5 px-2 rounded-lg text-[10px] font-bold">42K</button>
+                        </div>
+
+                        <div class="grid grid-cols-4 gap-2">
+                            <div>
+                                <label class="text-[9px] text-slate-400 block mb-0.5">Km:</label>
+                                <input id="calc-km" type="number" step="0.1" value="10.0" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-center font-bold text-white">
+                            </div>
+                            <div>
+                                <label class="text-[9px] text-slate-400 block mb-0.5">H:</label>
+                                <input id="calc-h" type="number" value="0" min="0" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-center font-bold text-white">
+                            </div>
+                            <div>
+                                <label class="text-[9px] text-slate-400 block mb-0.5">M:</label>
+                                <input id="calc-m" type="number" value="45" min="0" max="59" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-center font-bold text-white">
+                            </div>
+                            <div>
+                                <label class="text-[9px] text-slate-400 block mb-0.5">S:</label>
+                                <input id="calc-s" type="number" value="00" min="0" max="59" class="w-full bg-slate-950 border border-slate-800 rounded px-2 py-1 text-center font-bold text-white">
+                            </div>
+                        </div>
+
+                        <button onclick="calcularRitmo()" class="w-full bg-gradient-to-r from-orange-600 to-rose-600 hover:from-orange-500 hover:to-rose-500 py-2 rounded-xl text-[10px] font-bold uppercase tracking-wider text-center text-white">
+                            Calcular Ritmo
+                        </button>
+
+                        <div id="calc-results" class="bg-slate-950 p-2.5 rounded-xl border border-slate-800 flex justify-between items-center hidden">
+                            <div>
+                                <span class="text-[9px] text-slate-400 block">Ritmo Estimado:</span>
+                                <span id="res-pace" class="font-extrabold text-orange-400 text-sm">--:-- min/km</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[9px] text-slate-400 block">Velocidad:</span>
+                                <span id="res-speed" class="font-bold text-slate-300">-- km/h</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-3">
+                        <p class="font-bold mb-1 text-slate-400"><i class="fa-solid fa-calendar-arrow-down mr-1"></i> Mi Agenda Astur:</p>
+                        <button onclick="exportarFavoritosICS()" class="w-full bg-slate-800 hover:bg-slate-700 py-2 px-3 rounded-xl text-[10px] font-bold uppercase tracking-wider flex items-center justify-center gap-1.5 border border-slate-700 text-white">
+                            <i class="fa-solid fa-file-export text-orange-500"></i> Descargar (.ICS)
+                        </button>
+                    </div>
+
+                    <div class="border-t border-slate-800 pt-3">
+                        <p class="font-bold mb-1 text-slate-400"><i class="fa-solid fa-cloud-sun mr-1"></i> Consejo Asturias:</p>
+                        <div class="bg-slate-950 p-3 rounded-xl border border-slate-800 text-[10px] leading-relaxed text-slate-300">
+                            <p id="clima-consejo">Marca carreras como favoritas para recibir consejos de equipación específicos.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTENIDO PESTAÑA: IA -->
+                <div id="tab-content-ia" class="hidden flex flex-col h-full overflow-hidden">
+                    <div id="chat-container-ia" class="flex-grow overflow-y-auto bg-slate-950 rounded-2xl p-3 border border-slate-800 space-y-3 mb-2 flex flex-col no-scrollbar">
+                        <div class="p-3 rounded-2xl bg-slate-900 border border-slate-800 max-w-[90%] self-start">
+                            <div class="flex items-center gap-2 text-orange-400 font-bold mb-1 text-[10px]">
+                                <i class="fa-solid fa-circle-user"></i>
+                                <span>Xuan Coach Astur</span>
+                            </div>
+                            <p class="text-slate-300 leading-relaxed">¡Buenas, runner! Soy Xuan. ¿En qué carrera de la tierrina te puedo ayudar hoy?</p>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-1 mb-2">
+                        <button onclick="sendQuickPrompt('🌧️ Consejos para correr con orbayu')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 rounded p-1.5 text-[8px] text-left truncate">🌧️ Orbayu</button>
+                        <button onclick="sendQuickPrompt('📈 Plan 10K en 8 semanas')" class="bg-slate-800 hover:bg-slate-700 text-slate-300 rounded p-1.5 text-[8px] text-left truncate">📈 Plan 10K</button>
+                    </div>
+
+                    <div class="flex gap-1.5 bg-slate-950 p-1.5 rounded-xl border border-slate-800 items-center">
+                        <input type="text" id="ia-chat-input" placeholder="Pregunta a Xuan..." class="flex-grow bg-transparent text-white focus:outline-none px-2 py-1 text-[10px]">
+                        <button onclick="sendUserMessage()" id="btn-send-ia" class="w-8 h-8 rounded-lg bg-orange-500 hover:bg-orange-600 flex items-center justify-center text-white">
+                            <i class="fa-solid fa-paper-plane text-xs"></i>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <style>
+        .vertical-text { writing-mode: vertical-rl; transform: rotate(180deg); }
+        #runner-drawer.open { transform: translateX(0); }
+        #runner-drawer:not(.open) { transform: translateX(100%); }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+    </style>
+
     <script src="/app.js?v=2.2"></script>
     <!-- Schema.org Placeholder -->
     <script type="application/ld+json" id="schema-ld"></script>
